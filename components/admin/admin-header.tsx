@@ -17,7 +17,7 @@ import Image from "next/image"
 import { useAuth } from "@/hooks/use-auth"
 import { toast } from "@/components/ui/use-toast"
 
-export function AdminHeader({ admin }: { admin: Admin | undefined }) {
+export function AdminHeader({ admin }: { admin: Admin | null }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const { signOut } = useAuth()
 
