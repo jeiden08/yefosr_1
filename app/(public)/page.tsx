@@ -230,25 +230,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Impact Stats Section */}
-      {impactStats && impactStats.length > 0 && (
-        <section className="py-12 md:py-16 bg-muted/30">
-          <div className="container">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {impactStats.map((stat, index) => (
-                <AnimatedSection key={stat.id} delay={index * 100} className="text-center">
-                  <div className="p-6 rounded-lg bg-background border hover:shadow-md transition-shadow">
-                    <div className="text-3xl md:text-4xl font-bold text-primary mb-2">{stat.value}</div>
-                    <h3 className="text-lg font-medium">{stat.label}</h3>
-                    {stat.description && <p className="mt-2 text-sm text-muted-foreground">{stat.description}</p>}
-                  </div>
-                </AnimatedSection>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
-
       {/* Vision & Mission Section */}
       <section className="py-16 md:py-24">
         <div className="container">
@@ -315,6 +296,25 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Impact Stats Section (moved here, after Vision & Mission) */}
+      {impactStats && impactStats.length > 0 && (
+        <section className="py-12 md:py-16 bg-muted/30">
+          <div className="container">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+              {impactStats.map((stat, index) => (
+                <AnimatedSection key={stat.id} delay={index * 100} className="text-center">
+                  <div className="p-6 rounded-lg bg-background border hover:shadow-md transition-shadow">
+                    <div className="text-3xl md:text-4xl font-bold text-primary mb-2">{stat.value}</div>
+                    <h3 className="text-lg font-medium">{stat.label}</h3>
+                    {stat.description && <p className="mt-2 text-sm text-muted-foreground">{stat.description}</p>}
+                  </div>
+                </AnimatedSection>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Programs Section */}
       <section className="py-16 md:py-24 bg-muted/30">
