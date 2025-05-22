@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { createClient } from "@/lib/supabase/server"
 import { AnimatedSection } from "@/components/animated-section"
 import { GalleryGrid } from "@/components/gallery-grid"
@@ -23,7 +25,11 @@ export default async function GalleryPage() {
       .order("created_at", { ascending: false })
 
     if (!imagesError && imagesData) {
-      images = imagesData
+      // Map image_url to imageUrl for GalleryGrid compatibility
+      images = imagesData.map(img => ({
+        ...img,
+        imageUrl: img.image_url,
+      }))
 
       // Extract unique categories
       const categorySet = new Set<string>()

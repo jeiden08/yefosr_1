@@ -1,7 +1,9 @@
-import { createClient } from "@/lib/supabase/server"
+export const dynamic = "force-dynamic";
+
 import { AnimatedSection } from "@/components/animated-section"
 import Image from "next/image"
 import Link from "next/link"
+import { createClient } from "@/lib/supabase/server"
 
 export const metadata = {
   title: "About Us | Youth Empowerment For Self Reliance - YEFOSR",
@@ -9,41 +11,55 @@ export const metadata = {
 }
 
 export default async function AboutPage() {
-  let aboutContent = null
-  let teamMembers = []
+  // Fallback static team members
+  const staticTeamMembers = [
+    {
+      id: 1,
+      name: "John Doe",
+      position: "Executive Director",
+      bio: "Passionate about youth empowerment and community development.",
+      image_url: "/diverse-group.png",
+    },
+    {
+      id: 2,
+      name: "Jane Smith",
+      position: "Program Manager",
+      bio: "Experienced in designing and implementing youth programs.",
+      image_url: "/diverse-group.png",
+    },
+    {
+      id: 3,
+      name: "David Johnson",
+      position: "Community Outreach",
+      bio: "Dedicated to building strong community partnerships.",
+      image_url: "/diverse-group.png",
+    },
+    {
+      id: 4,
+      name: "Sarah Williams",
+      position: "Education Coordinator",
+      bio: "Focused on improving educational opportunities for youth.",
+      image_url: "/diverse-group.png",
+    },
+  ]
 
+  // Attempt to fetch from Supabase (team_members table)
+  let teamMembers = []
   try {
     const supabase = await createClient()
-
-    // Fetch about page content from site settings
-    const { data: aboutData, error: aboutError } = await supabase
-      .from("site_settings")
-      .select("*")
-      .eq("key", "about_content")
-      .single()
-
-    if (!aboutError) {
-      aboutContent = aboutData
-    } else {
-      console.error("Error fetching about content:", aboutError)
-    }
-
-    // Fetch team members if you have them
-    const { data: teamData, error: teamError } = await supabase
+    const { data, error } = await supabase
       .from("team_members")
       .select("*")
       .eq("published", true)
-      .is("deleted_at", null)
-      .order("order_index")
+      .order("order_index", { ascending: true })
 
-    if (!teamError && teamData) {
-      teamMembers = teamData
-    } else {
-      console.error("Error fetching team members:", teamError)
+    if (!error && data && data.length > 0) {
+      teamMembers = data
     }
-  } catch (error) {
-    console.error("Error in AboutPage:", error)
-  }
+  } catch (err) {}
+
+  // Use fetched team members if available, otherwise fallback
+  const teamMembersToShow = teamMembers.length > 0 ? teamMembers : staticTeamMembers
 
   return (
     <div className="container py-12 md:py-16">
@@ -57,7 +73,7 @@ export default async function AboutPage() {
       <div className="grid gap-12 md:grid-cols-2 items-center mb-16">
         <AnimatedSection>
           <div className="relative aspect-[4/3] overflow-hidden rounded-lg">
-            <Image src="/about-image.png" alt="Youth Empowerment Team" fill className="object-cover" />
+            <Image src="/about-image.jpg" alt="Youth Empowerment Team" fill className="object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end">
               <div className="p-4 text-white">
                 <h3 className="text-xl font-bold">Our Team at Work</h3>
@@ -129,7 +145,12 @@ export default async function AboutPage() {
             </p>
           </div>
           <div className="relative aspect-video overflow-hidden rounded-lg">
-            <Image src="/youth-workshop.png" alt="Youth Empowerment Workshop" fill className="object-cover" />
+            <Image
+              src="/youth-workshop.jpg"
+              alt="Youth Empowerment Workshop"
+              fill
+              className="object-cover"
+            />
           </div>
         </div>
       </AnimatedSection>
@@ -266,28 +287,26 @@ export default async function AboutPage() {
         </div>
       </AnimatedSection>
 
-      {teamMembers && teamMembers.length > 0 && (
-        <AnimatedSection className="mb-16">
-          <h2 className="text-3xl font-bold text-center mb-8">Our Team</h2>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {teamMembers.map((member) => (
-              <div key={member.id} className="text-center">
-                <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-full mb-4">
-                  <Image
-                    src={member.image_url || "/placeholder.svg?height=160&width=160&query=person"}
-                    alt={member.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <h3 className="text-lg font-semibold">{member.name}</h3>
-                <p className="text-primary">{member.position}</p>
-                <p className="text-sm text-muted-foreground mt-2">{member.bio}</p>
+      <AnimatedSection className="mb-16">
+        <h2 className="text-3xl font-bold text-center mb-8">Our Team</h2>
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {teamMembersToShow.map((member) => (
+            <div key={member.id} className="text-center">
+              <div className="relative mx-auto h-40 w-40 overflow-hidden rounded-full mb-4">
+                <Image
+                  src={member.image_url || "/placeholder.svg"}
+                  alt={member.name}
+                  fill
+                  className="object-cover"
+                />
               </div>
-            ))}
-          </div>
-        </AnimatedSection>
-      )}
+              <h3 className="text-lg font-semibold">{member.name}</h3>
+              <p className="text-primary">{member.position}</p>
+              <p className="text-sm text-muted-foreground mt-2">{member.bio}</p>
+            </div>
+          ))}
+        </div>
+      </AnimatedSection>
     </div>
   )
 }

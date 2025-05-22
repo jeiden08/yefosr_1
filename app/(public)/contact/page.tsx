@@ -1,5 +1,6 @@
+export const dynamic = "force-dynamic";
+
 import { ContactForm } from "@/components/contact-form"
-import { createClient } from "@/lib/supabase/server"
 import { MapPin, Mail, Phone } from "lucide-react"
 import { WhatsAppIcon } from "@/components/icons/whatsapp-icon"
 import { XIcon } from "@/components/icons/x-icon"
@@ -10,9 +11,9 @@ export const metadata = {
   description: "Get in touch with Youth Empowerment For Self Reliance. We'd love to hear from you!",
 }
 
-export default async function ContactPage() {
-  // Default contact info
-  let contactInfo = {
+export default function ContactPage() {
+  // Static contact info instead of database query
+  const contactInfo = {
     address: "Belameling Vocational Training Centre, Palorinya Refugee Settlement, Obongi District, Uganda",
     email: "yefosr@gmail.com",
     phone: ["+256 772 253 415", "+256 765 167 682", "+211 925 059 964"],
@@ -22,26 +23,6 @@ export default async function ContactPage() {
       linkedin: "https://linkedin.com/groups/13160404",
       twitter: "", // Will be added later
     },
-  }
-
-  try {
-    const supabase = await createClient()
-
-    // Fetch contact information from site settings
-    const { data: siteSettings, error } = await supabase
-      .from("site_settings")
-      .select("*")
-      .eq("key", "contact_info")
-      .single()
-
-    if (error) {
-      console.error("Error fetching contact information:", error)
-    } else if (siteSettings?.value) {
-      // Merge with defaults to ensure all fields exist
-      contactInfo = { ...contactInfo, ...siteSettings.value }
-    }
-  } catch (error) {
-    console.error("Error in ContactPage:", error)
   }
 
   return (

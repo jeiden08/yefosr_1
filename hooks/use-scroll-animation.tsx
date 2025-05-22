@@ -1,25 +1,30 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
+// Change from default export to named export
 export function useScrollAnimation() {
   const [isIntersecting, setIsIntersecting] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (!ref.current) return
-
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsIntersecting(entry.isIntersecting)
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsIntersecting(true)
+            observer.unobserve(entry.target)
+          }
+        })
       },
       {
-        rootMargin: "0px",
-        threshold: 0.1,
+        threshold: 0.2,
       },
     )
 
-    observer.observe(ref.current)
+    if (ref.current) {
+      observer.observe(ref.current)
+    }
 
     return () => {
       if (ref.current) {
@@ -28,5 +33,5 @@ export function useScrollAnimation() {
     }
   }, [])
 
-  return { ref, isIntersecting }
+  return { isIntersecting, ref }
 }

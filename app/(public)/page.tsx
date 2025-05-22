@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import Image from "next/image"
@@ -71,7 +73,11 @@ export default async function HomePage() {
       .limit(4)
 
     if (!galleryError && galleryData) {
-      galleryImages = galleryData
+      // Map image_url to imageUrl for compatibility with <Image src={image.imageUrl} ... />
+      galleryImages = galleryData.map(img => ({
+        ...img,
+        imageUrl: img.image_url,
+      }))
     } else {
       console.error("Error fetching gallery images:", galleryError)
     }
@@ -224,7 +230,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Impact Stats Section - New section using the impact_stats table */}
+      {/* Impact Stats Section */}
       {impactStats && impactStats.length > 0 && (
         <section className="py-12 md:py-16 bg-muted/30">
           <div className="container">

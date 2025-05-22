@@ -17,7 +17,7 @@ import Image from "next/image"
 import { useAuth } from "@/hooks/use-auth"
 import { toast } from "@/components/ui/use-toast"
 
-export function AdminHeader({ admin }: { admin: Admin }) {
+export function AdminHeader({ admin }: { admin: Admin | undefined }) {
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const { signOut } = useAuth()
 
@@ -59,7 +59,7 @@ export function AdminHeader({ admin }: { admin: Admin }) {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-2">
                 <User className="h-4 w-4" />
-                <span>{admin.name}</span>
+                <span>{admin?.name ?? "Admin"}</span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

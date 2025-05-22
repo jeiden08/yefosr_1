@@ -1,64 +1,75 @@
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs"
 import { NextResponse } from "next/server"
 import type { NextRequest } from "next/server"
+import { createServerClient } from "@supabase/ssr"
 
-export async function middleware(req: NextRequest) {
-  const res = NextResponse.next()
-  const pathname = req.nextUrl.pathname
+export async function middleware(request: NextRequest) {
+  // Skip middleware for non-admin routes
+  if (!request.nextUrl.pathname.startsWith("/admin")) {
+    return NextResponse.next()
+  }
 
-  // Create a Supabase client configured to use cookies
-  const supabase = createMiddlewareClient({ req, res })
+  // Skip middleware for admin login page and reset password
+  if (request.nextUrl.pathname === "/admin/login" || request.nextUrl.pathname === "/admin/reset-password") {
+    return NextResponse.next()
+  }
 
-  // Refresh session if expired - required for Server Components
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  // For admin routes, check authentication
+  const response = NextResponse.next()
 
-  // Admin routes protection
-  if (pathname.startsWith("/admin") && pathname !== "/admin/login" && pathname !== "/admin/reset-password") {
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
+        },
+        set(name: string, value: string, options: any) {
+          // Don't set cookies in the middleware
+          response.cookies.set({ name, value, ...options })
+        },
+        remove(name: string, options: any) {
+          // Don't remove cookies in the middleware
+          response.cookies.set({ name, value: "", ...options })
+        },
+      },
+    },
+  )
+
+  try {
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    // If no session and trying to access admin pages, redirect to login
     if (!session) {
-      // Redirect to login if no session
-      const redirectUrl = new URL("/admin/login", req.url)
+      const redirectUrl = new URL("/admin/login", request.url)
       return NextResponse.redirect(redirectUrl)
     }
 
-    // Check if the user is an admin
-    if (session) {
-      try {
-        const { data: admin, error } = await supabase
-          .from("admins")
-          .select("*")
-          .eq("email", session.user.email)
-          .single()
+    // Check if user is an admin
+    const { data: admin, error: adminError } = await supabase
+      .from("admins")
+      .select("id")
+      .eq("email", session.user.email)
+      .single()
 
-        if (error || !admin) {
-          // If not an admin, sign out and redirect to login
-          await supabase.auth.signOut()
-          const redirectUrl = new URL("/admin/login", req.url)
-          return NextResponse.redirect(redirectUrl)
-        }
-      } catch (error) {
-        console.error("Error checking admin status:", error)
-        // On error, redirect to login to be safe
-        const redirectUrl = new URL("/admin/login", req.url)
-        return NextResponse.redirect(redirectUrl)
-      }
+    if (adminError || !admin) {
+      // If not an admin, sign out and redirect to login
+      await supabase.auth.signOut()
+      const redirectUrl = new URL("/admin/login", request.url)
+      return NextResponse.redirect(redirectUrl)
     }
-  }
 
-  // If user is logged in and tries to access login page, redirect to admin dashboard
-  // IMPORTANT: Commenting this out to prevent redirect loops
-  /*
-  if (pathname === "/admin/login" && session) {
-    const redirectUrl = new URL("/admin", req.url)
+    return response
+  } catch (error) {
+    console.error("Middleware auth error:", error)
+    // If there's an error checking the session, redirect to login
+    const redirectUrl = new URL("/admin/login", request.url)
     return NextResponse.redirect(redirectUrl)
   }
-  */
-
-  return res
 }
 
-// Specify which paths this middleware will run on
 export const config = {
   matcher: ["/admin/:path*"],
 }

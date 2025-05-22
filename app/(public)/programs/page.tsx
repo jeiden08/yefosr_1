@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { createClient } from "@/lib/supabase/server"
 import { AnimatedSection } from "@/components/animated-section"
 import { Button } from "@/components/ui/button"
