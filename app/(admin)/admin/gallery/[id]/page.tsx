@@ -29,7 +29,8 @@ const formSchema = z.object({
     message: "Please select a category.",
   }),
   featured: z.boolean().default(false),
-  image: z.instanceof(FileList).optional(),
+  // FIX: Use z.any() to avoid server-side FileList reference
+  image: z.any().optional(),
 })
 
 export default function AdminGalleryEditPage({ params }: { params: { id: string } }) {

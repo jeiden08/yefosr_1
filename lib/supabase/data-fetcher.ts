@@ -3,17 +3,16 @@ import { handleSupabaseError } from "./error-handler"
 import { cache } from "react"
 
 // Generic type for fetching a single item
-export const fetchItem = cache(async <T>(\
+export const fetchItem = cache(async <T>(
   tableName: string,
   id: string,
   columns: string = "*",
   options?: {
     relationTable?: string;
-relationColumns?: string;
-}
-): Promise<T | null> =>
-{
-  const supabase = createClient()
+    relationColumns?: string;
+  }
+): Promise<T | null> => {
+  const supabase = await createClient() // <-- await!
 
   try {
     let query = supabase.from(tableName).select(columns).eq("id", id).is("deleted_at", null).single()
@@ -38,25 +37,21 @@ relationColumns?: string;
     handleSupabaseError(error, `Failed to fetch ${tableName}`)
     return null
   }
-}
-)
+})
 
 // Generic type for fetching a list of items
 export const fetchItems = cache(async <T>(
   tableName: string,
   options?: {
     columns?: string;
-filters?: Record<string, any>;
-orderBy?: { column: string;
-ascending?: boolean
-}
-limit?: number
-relationTable?: string;
-relationColumns?: string;
-}
-): Promise<T[]> =>
-{
-  const supabase = createClient()
+    filters?: Record<string, any>;
+    orderBy?: { column: string; ascending?: boolean };
+    limit?: number;
+    relationTable?: string;
+    relationColumns?: string;
+  }
+): Promise<T[]> => {
+  const supabase = await createClient() // <-- await!
   const { columns = "*", filters = {}, orderBy, limit, relationTable, relationColumns } = options || {}
 
   try {
@@ -102,5 +97,4 @@ relationColumns?: string;
     handleSupabaseError(error, `Failed to fetch ${tableName} items`)
     return []
   }
-}
-)
+})

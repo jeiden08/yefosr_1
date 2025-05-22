@@ -1,8 +1,8 @@
-import { createClient } from "./server"
+import { createClient } from "@/lib/supabase/server"
 import type { Admin } from "@/lib/types"
 
 export async function getAdminById(id: string): Promise<Admin | null> {
-  const supabase = createClient()
+  const supabase = await createClient() // <-- await!
   const { data, error } = await supabase
     .from("admins")
     .select("*")

@@ -10,10 +10,13 @@ export async function GET(request: Request) {
   const endDate = searchParams.get("endDate")
   const search = searchParams.get("search")
 
-  const supabase = await createClient()
+  const supabase = await createClient() // <-- await!
 
   // Build the query
-  let query = supabase.from("audit_logs").select("*, admins(name, email)").order("created_at", { ascending: false })
+  let query = supabase
+    .from("audit_logs")
+    .select("*, admins(name, email)")
+    .order("created_at", { ascending: false })
 
   // Apply filters
   if (adminId) {
@@ -37,7 +40,9 @@ export async function GET(request: Request) {
   }
 
   if (search) {
-    query = query.or(`resource_id.ilike.%${search}%, previous_data.ilike.%${search}%, new_data.ilike.%${search}%`)
+    query = query.or(
+      `resource_id.ilike.%${search}%,previous_data.ilike.%${search}%,new_data.ilike.%${search}%`
+    )
   }
 
   // Execute the query
@@ -49,10 +54,11 @@ export async function GET(request: Request) {
   }
 
   // Convert logs to CSV
-  const csvHeader = "Date,Time,Admin Name,Admin Email,Action,Resource Type,Resource ID,IP Address\n"
+  const csvHeader =
+    "Date,Time,Admin Name,Admin Email,Action,Resource Type,Resource ID,IP Address\n"
 
   const csvRows = logs
-    .map((log) => {
+    .map((log: any) => {
       const date = new Date(log.created_at)
       const dateStr = format(date, "yyyy-MM-dd")
       const timeStr = format(date, "HH:mm:ss")
@@ -61,10 +67,10 @@ export async function GET(request: Request) {
       const adminEmail = log.admins?.email || "Unknown"
       const resourceType = log.resource_type
         .split("_")
-        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .map((word: string) => word.charAt(0).toUpperCase() + word.slice(1))
         .join(" ")
 
-      // Escape fields that might contain commas
+      // Escape fields that might contain commas or quotes
       const escapeCsv = (field: string) => {
         if (field && (field.includes(",") || field.includes('"'))) {
           return `"${field.replace(/"/g, '""')}"`
@@ -91,7 +97,10 @@ export async function GET(request: Request) {
   return new Response(csv, {
     headers: {
       "Content-Type": "text/csv",
-      "Content-Disposition": `attachment; filename="audit-logs-${format(new Date(), "yyyy-MM-dd")}.csv"`,
+      "Content-Disposition": `attachment; filename="audit-logs-${format(
+        new Date(),
+        "yyyy-MM-dd"
+      )}.csv"`,
     },
   })
 }

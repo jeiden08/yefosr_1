@@ -1,9 +1,9 @@
 import { createServerClient } from "@supabase/ssr"
 import { cookies } from "next/headers"
 
-// Remove the async keyword since this function doesn't need to be async
-export function createClient() {
-  const cookieStore = cookies()
+// Make this function async and await cookies()
+export async function createClient() {
+  const cookieStore = await cookies()
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
