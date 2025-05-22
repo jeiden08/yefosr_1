@@ -36,8 +36,9 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
       aria-label="Site Footer"
     >
       <div className="container py-12 md:py-16">
-        <div className="grid gap-12 md:grid-cols-2 lg:grid-cols-3">
-          <div className="flex flex-col gap-4">
+        <div className="grid gap-y-12 gap-x-8 md:grid-cols-2 lg:grid-cols-3">
+          {/* Logo and Description Section */}
+          <div className="flex flex-col gap-6 items-start bg-white/70 dark:bg-gray-900/60 rounded-lg shadow-md p-6 transition-shadow">
             <Link href="/" className="flex items-center gap-3" aria-label="Youth Empowerment Home">
               <Image
                 src="/logo.png"
@@ -48,7 +49,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                 priority
               />
               <div>
-                <span className="block font-bold text-xl text-gray-900 dark:text-white leading-tight">
+                <span className="block font-bold text-2xl text-gray-900 dark:text-white leading-tight tracking-tight">
                   Youth Empowerment For Self Reliance - YEFOSR
                 </span>
                 <span className="text-primary ml-1 italic text-xs">Inspiring Generations!</span>
@@ -57,7 +58,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
             <p className="text-sm text-muted-foreground mt-2 max-w-xs leading-relaxed">
               Empowering youth for a better future through education, skills development, and community engagement.
             </p>
-            <div className="flex gap-3 mt-2">
+            <div className="flex gap-3 mt-1">
               {socialLinks.facebook && (
                 <a
                   href={socialLinks.facebook}
@@ -65,7 +66,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                   rel="noopener noreferrer"
                   aria-label="Facebook"
                   title="Facebook"
-                  className="bg-white p-2 rounded-full hover:bg-blue-50 transition-colors shadow-sm dark:bg-gray-800 dark:hover:bg-gray-700 focus-visible:ring-2 focus-visible:ring-primary"
+                  className="bg-white dark:bg-gray-800 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-950 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <Facebook className="h-5 w-5 text-blue-600 dark:text-blue-400 transition-transform duration-200 hover:scale-110" />
                 </a>
@@ -77,7 +78,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                   rel="noopener noreferrer"
                   aria-label="LinkedIn"
                   title="LinkedIn"
-                  className="bg-white p-2 rounded-full hover:bg-blue-50 transition-colors shadow-sm dark:bg-gray-800 dark:hover:bg-gray-700 focus-visible:ring-2 focus-visible:ring-primary"
+                  className="bg-white dark:bg-gray-800 p-2 rounded-full hover:bg-blue-50 dark:hover:bg-blue-950 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <Linkedin className="h-5 w-5 text-blue-700 dark:text-blue-500 transition-transform duration-200 hover:scale-110" />
                 </a>
@@ -89,7 +90,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                   rel="noopener noreferrer"
                   aria-label="X (Twitter)"
                   title="X (Twitter)"
-                  className="bg-white p-2 rounded-full hover:bg-gray-100 transition-colors shadow-sm dark:bg-gray-800 dark:hover:bg-gray-700 focus-visible:ring-2 focus-visible:ring-primary"
+                  className="bg-white dark:bg-gray-800 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-950 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <XIcon className="h-5 w-5 text-black dark:text-white transition-transform duration-200 hover:scale-110" />
                 </a>
@@ -101,24 +102,26 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                   rel="noopener noreferrer"
                   aria-label="WhatsApp"
                   title="WhatsApp"
-                  className="bg-white p-2 rounded-full hover:bg-green-50 transition-colors shadow-sm dark:bg-gray-800 dark:hover:bg-gray-700 focus-visible:ring-2 focus-visible:ring-primary"
+                  className="bg-white dark:bg-gray-800 p-2 rounded-full hover:bg-green-50 dark:hover:bg-green-950 transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-primary"
                 >
                   <WhatsAppIcon className="h-5 w-5 text-green-600 dark:text-green-500 transition-transform duration-200 hover:scale-110" />
                 </a>
               )}
             </div>
           </div>
-          <div>
-            <h3 className="text-base font-semibold mb-4 uppercase tracking-wider text-primary/90 dark:text-primary/80 letter-spacing-wider">
+
+          {/* Quick Links Section */}
+          <div className="flex flex-col bg-white/70 dark:bg-gray-900/60 rounded-lg shadow-md p-6 transition-shadow">
+            <h3 className="text-lg font-semibold mb-3 uppercase tracking-wider text-primary/90 dark:text-primary/80">
               Quick Links
             </h3>
-            <hr className="mb-4 border-gray-200 dark:border-gray-700" aria-hidden="true" />
-            <nav className="flex flex-col gap-2" aria-label="Quick Links">
+            <div className="h-1 w-10 bg-primary/70 rounded-full mb-4" aria-hidden="true" />
+            <nav className="grid grid-cols-2 gap-2" aria-label="Quick Links">
               {navigation.links.map((link: any, index: number) => (
                 <Link
                   key={index}
                   href={link.href}
-                  className="text-sm text-muted-foreground transition-colors hover:text-primary focus-visible:underline"
+                  className="text-sm text-muted-foreground transition-colors hover:text-primary hover:font-medium focus-visible:underline rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary px-1 py-0.5"
                   aria-label={link.title}
                   title={link.title}
                 >
@@ -127,11 +130,13 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
               ))}
             </nav>
           </div>
-          <div>
-            <h3 className="text-base font-semibold mb-4 uppercase tracking-wider text-primary/90 dark:text-primary/80 letter-spacing-wider">
+
+          {/* Contact Section */}
+          <div className="flex flex-col bg-white/70 dark:bg-gray-900/60 rounded-lg shadow-md p-6 transition-shadow">
+            <h3 className="text-lg font-semibold mb-3 uppercase tracking-wider text-primary/90 dark:text-primary/80">
               Contact Us
             </h3>
-            <hr className="mb-4 border-gray-200 dark:border-gray-700" aria-hidden="true" />
+            <div className="h-1 w-10 bg-primary/70 rounded-full mb-4" aria-hidden="true" />
             <div className="flex flex-col gap-3" aria-label="Contact Information">
               {contactInfo.address && (
                 <div className="flex items-start gap-2">
@@ -148,7 +153,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                         <a
                           key={index}
                           href={`tel:${phone.replace(/\s+/g, "")}`}
-                          className="text-sm text-muted-foreground hover:text-primary focus-visible:underline"
+                          className="text-sm text-muted-foreground hover:text-primary hover:font-medium focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                           aria-label={`Call ${phone}`}
                           title={`Call ${phone}`}
                         >
@@ -158,7 +163,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                     ) : (
                       <a
                         href={`tel:${contactInfo.phone?.replace(/\s+/g, "")}`}
-                        className="text-sm text-muted-foreground hover:text-primary focus-visible:underline"
+                        className="text-sm text-muted-foreground hover:text-primary hover:font-medium focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                         aria-label={`Call ${contactInfo.phone}`}
                         title={`Call ${contactInfo.phone}`}
                       >
@@ -173,7 +178,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                   <Mail className="h-5 w-5 text-primary" aria-hidden="true" />
                   <a
                     href={`mailto:${contactInfo.email}`}
-                    className="text-sm text-muted-foreground hover:text-primary focus-visible:underline"
+                    className="text-sm text-muted-foreground hover:text-primary hover:font-medium focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                     aria-label={`Email ${contactInfo.email}`}
                     title={`Email ${contactInfo.email}`}
                   >
@@ -188,7 +193,7 @@ export function SiteFooter({ settings }: { settings: Record<string, any> }) {
                     href={`https://wa.me/${contactInfo.whatsapp?.replace(/\s+/g, "")}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground hover:text-primary focus-visible:underline"
+                    className="text-sm text-muted-foreground hover:text-primary hover:font-medium focus-visible:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded"
                     aria-label="Chat on WhatsApp"
                     title="Chat on WhatsApp"
                   >
