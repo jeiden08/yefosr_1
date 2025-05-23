@@ -239,7 +239,7 @@ export default async function HomePage() {
                 Our Vision
               </div>
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                Empowered and Economically Self-reliant youth and rural communities
+                Empowered and Economically Self-reliant youth in rural communities
               </h2>
               <p className="text-muted-foreground">
                 We envision a society where young people are using their full potential to create positive change in
